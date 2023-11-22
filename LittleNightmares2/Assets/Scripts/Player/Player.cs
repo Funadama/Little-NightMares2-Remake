@@ -8,69 +8,90 @@ public class Player : MonoBehaviour
 {
     private float Angle;
     private float AtAngle;
-    private float UsingRotationSpeed;
+    private float RotationSpeed;
     private int SpeedState;
+    private float MovementSpeed;
+    private bool OnGround;
 
-    public float Acceleration;
+    public float Rotation_Acceleration;
     public float Min_RotationSpeed;
     public float Max_RotationSpeed;
-    public float Speed;
+
+    public float Max_MovementSpeed;
+    public float decelerate;
+
+    public float jumpHeight;
 
     void Update()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+        OnGround = Physics.Raycast(new Ray(transform.position, Vector3.down), out RaycastHit hit, 1);
+
+
+        if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D)) && OnGround)
         {
+            float horizontalInput = Input.GetAxis("Horizontal");
+            float verticalInput = Input.GetAxis("Vertical");
             Angle = CalculateAngle(horizontalInput, verticalInput);
 
-            //acceleration
-            UsingRotationSpeed = Mathf.Min(Max_RotationSpeed, UsingRotationSpeed + Acceleration);
+            //Acceleration
+            RotationSpeed = Mathf.Min(Max_RotationSpeed, RotationSpeed + Rotation_Acceleration);
             //Rotation
-            AtAngle = Mathf.MoveTowardsAngle(AtAngle, Angle, UsingRotationSpeed * Time.deltaTime);
+            AtAngle = Mathf.MoveTowardsAngle(AtAngle, Angle, RotationSpeed * Time.deltaTime);
             gameObject.transform.eulerAngles = new Vector3(gameObject.transform.eulerAngles.x, AtAngle, gameObject.transform.eulerAngles.z);
 
-            //Postion
-            gameObject.transform.position = gameObject.transform.position + Time.deltaTime * transform.forward * Speed;
+            //Speed
+            MovementSpeed = Max_MovementSpeed;
         }
         else
         {
-            UsingRotationSpeed = Min_RotationSpeed;
+            RotationSpeed = Min_RotationSpeed;
         }
 
+        //Movement
+        if (OnGround)
+        {
+            MovementSpeed = Mathf.Max(0, MovementSpeed - decelerate);
+        }
+        gameObject.transform.position = gameObject.transform.position + Time.deltaTime * transform.forward * MovementSpeed;
+
         //Running/Crouching
-        
+
         if (Input.GetKey(KeyCode.LeftShift))
         {
             //Running
             SpeedState = 1;
 
-            Acceleration = 10;
+            Rotation_Acceleration = 10;
             Min_RotationSpeed = 200;
             Max_RotationSpeed = 300;
-            Speed = 10;
+            Max_MovementSpeed = 10;
         }
         else if (Input.GetKey(KeyCode.LeftControl))
         {
             //Crouching
             SpeedState = 2;
 
-            Acceleration = 10;
+            Rotation_Acceleration = 10;
             Min_RotationSpeed = 200;
             Max_RotationSpeed = 300;
-            Speed = 3;
+            Max_MovementSpeed = 3;
         }
         else
         {
             //Walking
             SpeedState = 0;
         
-            Acceleration = 15;
+            Rotation_Acceleration = 15;
             Min_RotationSpeed = 200;
             Max_RotationSpeed = 350;
-            Speed = 6;
+            Max_MovementSpeed = 6;
         }
 
+        //Jumping
+        if (Input.GetKeyDown(KeyCode.Space) && OnGround)
+        {
+            GetComponent<Rigidbody>().velocity += jumpHeight * Vector3.up;
+        }
 
     }
 
