@@ -1,9 +1,9 @@
-## Unity Code Conventions
+# Unity Code Conventions
 
-# Introduction
+## Introduction
 This document outlines the coding conventions to be followed when writing Unity scripts. Adhering to these conventions ensures consistency and readability across the project.
 
-# Variable Naming
+## Variable Naming
 **Capitalization:** Variable names should start with a capital letter.
 
 ```
@@ -22,7 +22,7 @@ string playerName;
 // Avoid
 string pName;
 ```
-# Variable Placement
+## Variable Placement
 **Private Variables:** Private variables are declared at the top of the script.
 
 ```
@@ -53,7 +53,7 @@ public class ExampleScript : MonoBehaviour
 ```
 private int internalCounter = 0;
 ```
-# Update Function
+## Update Function
 **Position:** If your script contains an Update function, place it at the top of the script for easy visibility.
 
 ```
