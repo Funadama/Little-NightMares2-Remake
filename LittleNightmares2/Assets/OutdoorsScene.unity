@@ -586,7 +586,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1497225669, guid: e3edb13b8c2f5024d888ddeecf80a5a6, type: 3}
       propertyPath: jumpHeight
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1497225669, guid: e3edb13b8c2f5024d888ddeecf80a5a6, type: 3}
       propertyPath: Movement_decelerate
