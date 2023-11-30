@@ -9,9 +9,9 @@ public class PlayerMovement : MonoBehaviour
     private float Angle;
     private float AtAngle;
     private float RotationSpeed;
-    private float MovementSpeed;
+    public float MovementSpeed;
     private bool OnGround;
-
+    private bool Moving;
 
     public float Rotation_Acceleration;
     public float Min_RotationSpeed;
@@ -26,8 +26,9 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         OnGround = Physics.Raycast(new Ray(transform.position, Vector3.down), out RaycastHit hit, 1);
-        
-        if (((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D)) && !(gameObject.GetComponent<Player_Climb>().IsClimb)))
+        Moving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D);
+
+        if (Moving && !(gameObject.GetComponent<Player_Climb>().IsClimb))
         {
             float horizontalInput = Input.GetAxis("Horizontal");
             float verticalInput = Input.GetAxis("Vertical");
@@ -53,7 +54,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //decelerate Movement
-        if (OnGround)
+        if (OnGround && !(Moving))
         {
             MovementSpeed = Mathf.Max(0, MovementSpeed - Movement_decelerate);
         }
@@ -63,13 +64,18 @@ public class PlayerMovement : MonoBehaviour
         }
         //Wall detection
         Ray WallCheck = new Ray(transform.position, transform.forward);
-        bool Wall = Physics.Raycast(WallCheck, out hit, 0.5f);
-        Vector3 Dir = transform.forward + hit.normal * 1.5f;
+        Vector3 Dir = transform.forward;
+        bool Wall = Physics.Raycast(WallCheck, out hit, 0.7f);
+
+        if(hit.distance < 0.25f)
+        {
+            Dir = transform.forward + hit.normal * 1f;
+        }
         if (Wall)
         {
             MovementSpeed = 0;
         }
-  
+        Debug.Log(MovementSpeed);
         gameObject.transform.position = gameObject.transform.position + Time.deltaTime * Dir * MovementSpeed;
 
         //Running/Crouching
@@ -81,6 +87,7 @@ public class PlayerMovement : MonoBehaviour
             Rotation_Acceleration = 2;
             Min_RotationSpeed = 50;
             Max_RotationSpeed = 100;
+            Max_MovementSpeed = Mathf.Max(1, MovementSpeed);
         }
         else if (Input.GetKey(KeyCode.LeftControl))
         {
@@ -124,6 +131,15 @@ public class PlayerMovement : MonoBehaviour
         float radians = Mathf.Atan2(horizontal, vertical);
         float degrees = radians * Mathf.Rad2Deg;
         return degrees;
+    }
+
+    void OnCollisionEnter()
+    {
+        if(!(OnGround))
+        {
+            MovementSpeed = 0;
+            Max_MovementSpeed = Mathf.Max(1, Max_MovementSpeed - 1);
+        }
     }
 
 
