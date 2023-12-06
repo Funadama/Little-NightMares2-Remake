@@ -30,15 +30,10 @@ public class PlayerMovement : MonoBehaviour
 
         if (Moving && !(gameObject.GetComponent<Player_Climb>().IsClimb))
         {
+            //Set Rotaion Target
             float horizontalInput = Input.GetAxis("Horizontal");
             float verticalInput = Input.GetAxis("Vertical");
             Angle = CalculateAngle(horizontalInput, verticalInput);
-
-            //Rotation Speed Acceleration
-            RotationSpeed = Mathf.Min(Max_RotationSpeed, RotationSpeed + Rotation_Acceleration);
-            //Rotation
-            AtAngle = Mathf.MoveTowardsAngle(AtAngle, Angle, RotationSpeed * Time.deltaTime);
-            gameObject.transform.eulerAngles = new Vector3(gameObject.transform.eulerAngles.x, AtAngle, gameObject.transform.eulerAngles.z);
 
             //Walk while rotating
             if (Mathf.Abs(Mathf.DeltaAngle(AtAngle, Angle)) < 100)
@@ -47,11 +42,25 @@ public class PlayerMovement : MonoBehaviour
                 MovementSpeed = Mathf.Min(Max_MovementSpeed, MovementSpeed + Movement_Acceleration);
             }
         }
+        
+
+        if (Mathf.Abs(Mathf.DeltaAngle(AtAngle, Angle)) > 1)
+        {
+
+            //Rotation Speed Acceleration
+            RotationSpeed = Mathf.Min(Max_RotationSpeed, RotationSpeed + Rotation_Acceleration);
+            //Rotation get angle
+            AtAngle = Mathf.MoveTowardsAngle(AtAngle, Angle, RotationSpeed * Time.deltaTime);
+            //Rotation
+            gameObject.transform.eulerAngles = new Vector3(gameObject.transform.eulerAngles.x, AtAngle, gameObject.transform.eulerAngles.z);
+        }
         else
         {
             //Reset Acceleration
             RotationSpeed = Min_RotationSpeed;
         }
+
+
 
         //decelerate Movement
         if (OnGround && !(Moving))
@@ -75,7 +84,6 @@ public class PlayerMovement : MonoBehaviour
         {
             MovementSpeed = 0;
         }
-        Debug.Log(MovementSpeed);
         gameObject.transform.position = gameObject.transform.position + Time.deltaTime * Dir * MovementSpeed;
 
         //Running/Crouching
@@ -95,7 +103,7 @@ public class PlayerMovement : MonoBehaviour
 
             Rotation_Acceleration = 10;
             Min_RotationSpeed = 200;
-            Max_RotationSpeed = 300;
+            Max_RotationSpeed = 350;
             Max_MovementSpeed = 3;
         }
         else if (Input.GetKey(KeyCode.LeftShift))
@@ -104,7 +112,7 @@ public class PlayerMovement : MonoBehaviour
 
             Rotation_Acceleration = 10;
             Min_RotationSpeed = 200;
-            Max_RotationSpeed = 300;
+            Max_RotationSpeed = 350;
             Max_MovementSpeed = 10;
         }
         else
@@ -113,7 +121,7 @@ public class PlayerMovement : MonoBehaviour
 
             Rotation_Acceleration = 15;
             Min_RotationSpeed = 200;
-            Max_RotationSpeed = 350;
+            Max_RotationSpeed = 400;
             Max_MovementSpeed = 6;
         }
 
