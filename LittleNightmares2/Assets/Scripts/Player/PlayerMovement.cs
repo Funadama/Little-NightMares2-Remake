@@ -2,67 +2,71 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using UnityEngine;
-
 public class PlayerMovement : MonoBehaviour
 {
-    private float Angle;
-    private float AtAngle;
+    // Rotation variables
+    private float targetAngle;
+    private float currentAngle;
     private float RotationSpeed;
-    public float MovementSpeed;
+
+    // Movement variables
     private bool OnGround;
     private bool Moving;
 
-    public float Rotation_Acceleration;
-    public float Min_RotationSpeed;
-    public float Max_RotationSpeed;
+    // Rotation acceleration parameters
+    private float Rotation_Acceleration;
+    private float Min_RotationSpeed;
+    private float Max_RotationSpeed;
 
-    public float Movement_Acceleration;
-    public float Movement_decelerate;
-    public float Max_MovementSpeed;
-    
-    public float jumpHeight;
+    // Movement acceleration and deceleration parameters
+    private float Max_MovementSpeed;
+    [SerializeField] private float Movement_Acceleration;
+    [SerializeField] private float Movement_decelerate;
+    [SerializeField] private float jumpHeight;
+
+    // Movement variable
+    public float MovementSpeed;
+
 
     void Update()
     {
+        // Ground check
         OnGround = Physics.Raycast(new Ray(transform.position, Vector3.down), out RaycastHit hit, 1);
         Moving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D);
 
         if (Moving && !(gameObject.GetComponent<Player_Climb>().IsClimb))
         {
-            //Set Rotaion Target
+            // Set Rotation Target
             float horizontalInput = Input.GetAxis("Horizontal");
             float verticalInput = Input.GetAxis("Vertical");
-            Angle = CalculateAngle(horizontalInput, verticalInput);
+            targetAngle = CalculateAngle(horizontalInput, verticalInput);
 
-            //Walk while rotating
-            if (Mathf.Abs(Mathf.DeltaAngle(AtAngle, Angle)) < 100)
+            // Walk while rotating
+            if (Mathf.Abs(Mathf.DeltaAngle(currentAngle, targetAngle)) < 100)
             {
-                //Movement Speed Acceleration
+                // Movement Speed Acceleration
                 MovementSpeed = Mathf.Min(Max_MovementSpeed, MovementSpeed + Movement_Acceleration);
             }
         }
-        
 
-        if (Mathf.Abs(Mathf.DeltaAngle(AtAngle, Angle)) > 1)
+        if (Mathf.Abs(Mathf.DeltaAngle(currentAngle, targetAngle)) > 1)
         {
-
-            //Rotation Speed Acceleration
+            // Rotation Speed Acceleration
             RotationSpeed = Mathf.Min(Max_RotationSpeed, RotationSpeed + Rotation_Acceleration);
-            //Rotation get angle
-            AtAngle = Mathf.MoveTowardsAngle(AtAngle, Angle, RotationSpeed * Time.deltaTime);
-            //Rotation
-            gameObject.transform.eulerAngles = new Vector3(gameObject.transform.eulerAngles.x, AtAngle, gameObject.transform.eulerAngles.z);
+
+            // Rotation get angle
+            currentAngle = Mathf.MoveTowardsAngle(currentAngle, targetAngle, RotationSpeed * Time.deltaTime);
+
+            // Rotation
+            gameObject.transform.eulerAngles = new Vector3(gameObject.transform.eulerAngles.x, currentAngle, gameObject.transform.eulerAngles.z);
         }
         else
         {
-            //Reset Acceleration
+            // Reset Acceleration
             RotationSpeed = Min_RotationSpeed;
         }
 
-
-
-        //decelerate Movement
+        // Decelerate Movement
         if (OnGround && !(Moving))
         {
             MovementSpeed = Mathf.Max(0, MovementSpeed - Movement_decelerate);
@@ -71,27 +75,29 @@ public class PlayerMovement : MonoBehaviour
         {
             MovementSpeed = Mathf.Max(0, MovementSpeed - Movement_decelerate * 0.1f);
         }
-        //Wall detection
+
+        // Wall detection
         Ray WallCheck = new Ray(transform.position, transform.forward);
         Vector3 Dir = transform.forward;
         bool Wall = Physics.Raycast(WallCheck, out hit, 0.7f);
 
-        if(hit.distance < 0.25f)
+        if (hit.distance < 0.25f)
         {
             Dir = transform.forward + hit.normal * 1f;
         }
+
         if (Wall)
         {
             MovementSpeed = 0;
         }
+
+        // Move the player
         gameObject.transform.position = gameObject.transform.position + Time.deltaTime * Dir * MovementSpeed;
 
-        //Running/Crouching
-
+        // Running/Crouching
         if (!OnGround)
         {
-            //Jumping
-
+            // Jumping
             Rotation_Acceleration = 2;
             Min_RotationSpeed = 50;
             Max_RotationSpeed = 100;
@@ -99,8 +105,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (Input.GetKey(KeyCode.LeftControl))
         {
-            //Crouching
-
+            // Crouching
             Rotation_Acceleration = 10;
             Min_RotationSpeed = 200;
             Max_RotationSpeed = 350;
@@ -108,8 +113,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (Input.GetKey(KeyCode.LeftShift))
         {
-            //Running
-
+            // Running
             Rotation_Acceleration = 10;
             Min_RotationSpeed = 200;
             Max_RotationSpeed = 350;
@@ -117,23 +121,21 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            //Walking
-
+            // Walking
             Rotation_Acceleration = 15;
             Min_RotationSpeed = 200;
             Max_RotationSpeed = 400;
             Max_MovementSpeed = 6;
         }
 
-        //Jumping
+        // Jumping
         if (Input.GetKeyDown(KeyCode.Space) && OnGround)
         {
             GetComponent<Rigidbody>().velocity += jumpHeight * Vector3.up;
         }
-
     }
 
-
+    // Helper method to calculate the angle
     float CalculateAngle(float horizontal, float vertical)
     {
         float radians = Mathf.Atan2(horizontal, vertical);
@@ -141,14 +143,14 @@ public class PlayerMovement : MonoBehaviour
         return degrees;
     }
 
+    // Collision handling
     void OnCollisionEnter()
     {
-        if(!(OnGround))
+        if (!(OnGround))
         {
+            // Stop movement on collision with non-ground object
             MovementSpeed = 0;
             Max_MovementSpeed = Mathf.Max(1, Max_MovementSpeed - 1);
         }
     }
-
-
 }

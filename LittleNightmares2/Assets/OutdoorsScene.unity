@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 2905.1887, g: 3095.7852, b: 4516.256, a: 1}
+  m_IndirectSpecularColor: {r: 2905.5813, g: 3096.1099, b: 4516.4443, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -441,9 +441,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae10cb31389c74c458361de6d278d106, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  test: {fileID: 117478565}
+  ClimbSpeed: 15
   IsClimb: 0
-  LerpToClimb: 0
 --- !u!1 &432432459
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,7 +1076,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3a167173c4934144b0700d122caf032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 350071612}
+  rotationSpeed: 2
+  positionSpeed: 2
+  player: {fileID: 350071612}
 --- !u!1 &2013410473
 GameObject:
   m_ObjectHideFlags: 1
