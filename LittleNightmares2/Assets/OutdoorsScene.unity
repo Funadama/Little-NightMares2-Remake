@@ -1689,6 +1689,11 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3632581687729319742, guid: 6097cada8ff83c74da11b0c2d7b53404,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4341193096683880793, guid: 6097cada8ff83c74da11b0c2d7b53404,
         type: 3}
       propertyPath: m_Name
@@ -1723,6 +1728,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_VolumetricFadeDistance
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5404623244220581237, guid: 6097cada8ff83c74da11b0c2d7b53404,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5481747996522168917, guid: 6097cada8ff83c74da11b0c2d7b53404,
         type: 3}
@@ -1803,6 +1813,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6404188835707097935, guid: 6097cada8ff83c74da11b0c2d7b53404,
+        type: 3}
+      propertyPath: m_TagString
+      value: door
       objectReference: {fileID: 0}
     - target: {fileID: 6923533070798932519, guid: 6097cada8ff83c74da11b0c2d7b53404,
         type: 3}

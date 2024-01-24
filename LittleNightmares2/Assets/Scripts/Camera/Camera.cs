@@ -8,6 +8,7 @@ public class Camera : MonoBehaviour
     [SerializeField] private float positionSpeed;
 
     public GameObject player;
+    private float PosDis;
 
     private void Update()
     {
@@ -21,7 +22,7 @@ public class Camera : MonoBehaviour
         Quaternion targetRotation = UpdateRotation();
 
         // Move the camera towards the target position if the distance is greater than 3 units
-        if (Vector3.Distance(transform.position, targetPosition) > 3f)
+        if (Vector3.Distance(transform.position, targetPosition) > PosDis)
         {
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, positionSpeed * Time.deltaTime);
         }
@@ -50,6 +51,23 @@ public class Camera : MonoBehaviour
         if (Mathf.Abs(transform.position.x - player.transform.position.x) > 8f)
         {
             targetPosition.x = Mathf.Max(-2.8f, player.transform.position.x);
+        }
+        if(player.transform.position.x > 10)
+        {
+            positionSpeed = 10;
+            targetPosition.x = 15;
+            PosDis = 0;
+        }
+        else if (transform.position.x > 3)
+        {
+            positionSpeed = 10;
+            targetPosition.x = 3;
+            PosDis = 0;
+        }
+        else
+        {
+            positionSpeed = 2;
+            PosDis = 3;
         }
 
         // Adjust the y position to follow the player vertically with an offset

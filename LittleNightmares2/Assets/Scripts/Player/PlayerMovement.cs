@@ -79,11 +79,11 @@ public class PlayerMovement : MonoBehaviour
         // Wall detection
         Ray WallCheck = new Ray(transform.position, transform.forward);
         Vector3 Dir = transform.forward;
-        bool Wall = Physics.Raycast(WallCheck, out hit, 0.7f);
+        bool Wall = Physics.Raycast(WallCheck, out hit, 1f) && hit.collider.tag != "door";
 
         if (hit.distance < 0.25f)
         {
-            Dir = transform.forward + hit.normal * 1f;
+            //Dir = transform.forward + hit.normal * 1f;
         }
 
         if (Wall)
