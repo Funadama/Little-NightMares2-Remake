@@ -3,12 +3,16 @@ using UnityEngine;
 public class PickUp : MonoBehaviour
 {
     private bool CanPickUp;
-    private bool IsMoving;
-    public float MoveSpeed = 5;
+    private bool IsHolding;
+    private float MoveSpeed = 5;
+
     public Transform Target;
     public Transform PlayerHand;
     public Transform PickupObject;
     public Animator PlayerAnim;
+
+    public bool IsMoving;
+    public bool IsPickup;
 
 
     private void Start()
@@ -25,33 +29,35 @@ public class PickUp : MonoBehaviour
         {
 
 
-            if (Input.GetKeyDown("p"))
+            if (Input.GetKey(KeyCode.Mouse0) && !(IsHolding))
             {
+                IsHolding = true;
+                IsPickup = true;
                 PlayerAnim.SetTrigger("GrabItem");
                 PickupObject.GetComponent<Collider>().enabled = false;
                 PickupObject.GetComponent<Rigidbody>().isKinematic = true;
-
-
             }
-
-
         }
 
-        if (IsMoving)
+        if (IsPickup)
         {
             PickupObject.position = Vector3.Lerp(PickupObject.position, Target.position, MoveSpeed * Time.deltaTime);
             PickupObject.rotation = Quaternion.RotateTowards(transform.rotation, PlayerHand.rotation, MoveSpeed * Time.deltaTime);
         }
+        else if (IsMoving)
+        {
+            PickupObject.position = Target.position;
+            PickupObject.rotation = Quaternion.RotateTowards(transform.rotation, PlayerHand.rotation, MoveSpeed * Time.deltaTime);
+        }
 
-        if (Input.GetKeyDown("o"))
+        if (!(Input.GetKey(KeyCode.Mouse0)) && IsHolding)
         {
             PutDown();
+            IsPickup = false;
             PickupObject.GetComponent<Rigidbody>().isKinematic = false;
             PickupObject.GetComponent<Collider>().enabled = true;
             PlayerAnim.SetTrigger("SetDown");
-
-
-
+            IsHolding = false;
         }
 
 
@@ -59,8 +65,11 @@ public class PickUp : MonoBehaviour
 
     public void MoveObj()
     {
-        IsMoving = true;
-
+        if(IsHolding)
+        {
+            IsMoving = true;
+            IsPickup = false;
+        }
     }
 
     public void PutDown()
@@ -70,17 +79,16 @@ public class PickUp : MonoBehaviour
     }
 
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider collision)
     {
         if (collision.gameObject.tag == "PickUpObject")
         {
             CanPickUp = true;
             PickupObject = collision.transform;
-            Debug.Log("Coll");
         }
     }
 
-    private void OnCollisionExit(Collision collision)
+    private void OnTriggerExit(Collider collision)
     {
         CanPickUp = false;
     }
