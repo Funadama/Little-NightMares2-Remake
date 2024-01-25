@@ -83,7 +83,7 @@ public class Player_Climb : MonoBehaviour
             // Move the player up during climbing
             Vector3 NewPos = gameObject.transform.position;
             NewPos.y = HitPos.y;
-            gameObject.transform.position = NewPos + transform.forward;
+            gameObject.transform.position = NewPos + transform.forward * 1.2f;
             IsClimb = false;
         }
     }

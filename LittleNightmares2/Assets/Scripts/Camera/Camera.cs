@@ -7,6 +7,7 @@ public class Camera : MonoBehaviour
     [SerializeField] private float rotationSpeed;
     [SerializeField] private float positionSpeed;
 
+    public GameObject Wall;
     public GameObject player;
     private float PosDis;
 
@@ -47,6 +48,12 @@ public class Camera : MonoBehaviour
     {
         Vector3 targetPosition = transform.position;
 
+        // Adjust the y position to follow the player vertically with an offset
+        targetPosition.y = Mathf.Min(9, player.transform.position.y + 7);
+
+        // Adjust the z position to follow the player on the z-axis with an offset
+        targetPosition.z = Mathf.Max(-17, player.transform.position.z - 18);
+
         // Adjust the x position if the distance between the camera and player on the x-axis is greater than 8 units
         if (Mathf.Abs(transform.position.x - player.transform.position.x) > 8f)
         {
@@ -60,6 +67,7 @@ public class Camera : MonoBehaviour
         }
         else if (transform.position.x > 3)
         {
+            Wall.SetActive(false);
             positionSpeed = 10;
             targetPosition.x = 3;
             PosDis = 0;
@@ -69,12 +77,24 @@ public class Camera : MonoBehaviour
             positionSpeed = 2;
             PosDis = 3;
         }
+        if (player.transform.position.x > 6)
+        {
+            Debug.Log("test");
 
-        // Adjust the y position to follow the player vertically with an offset
-        targetPosition.y = Mathf.Min(9, player.transform.position.y + 7);
+            targetPosition.z = -9;
+            if (player.transform.position.z < -4 && player.transform.position.x > 11.2f)
+            {
+                targetPosition.z =  player.transform.position.z - 10;
+                positionSpeed = 6;
+                PosDis = 1;
+            }
+        }
 
-        // Adjust the z position to follow the player on the z-axis with an offset
-        targetPosition.z = Mathf.Max(-17, player.transform.position.z - 18);
+        if (transform.position.x > 14)
+        {
+            Wall.SetActive(true);
+        }
+
 
         return targetPosition;
     }
