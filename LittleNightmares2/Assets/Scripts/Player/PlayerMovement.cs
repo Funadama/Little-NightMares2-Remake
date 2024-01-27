@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -31,8 +29,8 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         // Ground check
-        OnGround = Physics.Raycast(new Ray(transform.position + new Vector3(0,1,0), Vector3.down), out RaycastHit hit, 1);
-        if(!(gameObject.GetComponent<Player_Climb>().IsClimb || gameObject.GetComponent<PickUp>().IsPickup))
+        OnGround = Physics.Raycast(new Ray(transform.position + new Vector3(0, 1, 0), Vector3.down), out RaycastHit hit, 1);
+        if (!(gameObject.GetComponent<Player_Climb>().IsClimb || gameObject.GetComponent<PickUp>().IsPickup))
         {
             Moving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D);
         }

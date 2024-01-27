@@ -65,7 +65,7 @@ public class PickUp : MonoBehaviour
 
     public void MoveObj()
     {
-        if(IsHolding)
+        if (IsHolding)
         {
             IsMoving = true;
             IsPickup = false;
