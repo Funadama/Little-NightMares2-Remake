@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // Ground check
         OnGround = Physics.Raycast(new Ray(transform.position + new Vector3(0,1,0), Vector3.down), out RaycastHit hit, 1);
-        if(!(gameObject.GetComponent<Player_Climb>().IsClimb || gameObject.GetComponent<PickUp>().IsPickup))
+        if(!(gameObject.GetComponent<Player_Climb>().IsClimb || gameObject.GetComponent<PickUp>().IsPickup || gameObject.GetComponent<PushAndPull>().IsHolding))
         {
             Moving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D);
         }
@@ -86,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
         // Wall detection
         Ray WallCheck = new Ray(transform.position, transform.forward);
         Vector3 Dir = transform.forward;
-        bool Wall = Physics.Raycast(WallCheck, out hit, 1f) && hit.collider.tag != "door" && hit.collider.tag != "PickUpObject";
+        bool Wall = Physics.Raycast(WallCheck, out hit, 1f) && hit.collider.tag != "door" && hit.collider.tag != "PickUpObject" && hit.collider.tag != "PushObj";
 
         if (hit.distance < 0.25f)
         {
@@ -145,7 +145,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Jumping
-        if (Input.GetKeyDown(KeyCode.Space) && OnGround && !(gameObject.GetComponent<PickUp>().IsMoving))
+        if (Input.GetKeyDown(KeyCode.Space) && OnGround && !(gameObject.GetComponent<PickUp>().IsMoving) && !(gameObject.GetComponent<PushAndPull>().IsHolding))
         {
             GetComponent<Rigidbody>().velocity += jumpHeight * Vector3.up;
         }
