@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -27,19 +25,30 @@ public class PlayerMovement : MonoBehaviour
     // Movement variable
     public float MovementSpeed;
 
+    // animator
+    public Animator anim;
+
 
     void Update()
     {
         // Ground check
-        OnGround = Physics.Raycast(new Ray(transform.position, Vector3.down), out RaycastHit hit, 1);
-        Moving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D);
+        OnGround = Physics.Raycast(new Ray(transform.position + new Vector3(0, 1, 0), Vector3.down), out RaycastHit hit, 1);
+        if (!(gameObject.GetComponent<Player_Climb>().IsClimb || gameObject.GetComponent<PickUp>().IsPickup || gameObject.GetComponent<PushAndPull>().IsHolding))
+        {
+            Moving = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D);
+        }
+        else
+        {
+            Moving = false;
+        }
 
-        if (Moving && !(gameObject.GetComponent<Player_Climb>().IsClimb))
+        if (Moving)
         {
             // Set Rotation Target
             float horizontalInput = Input.GetAxis("Horizontal");
             float verticalInput = Input.GetAxis("Vertical");
             targetAngle = CalculateAngle(horizontalInput, verticalInput);
+            anim.SetBool("IsMoving", true);
 
             // Walk while rotating
             if (Mathf.Abs(Mathf.DeltaAngle(currentAngle, targetAngle)) < 100)
@@ -70,6 +79,8 @@ public class PlayerMovement : MonoBehaviour
         if (OnGround && !(Moving))
         {
             MovementSpeed = Mathf.Max(0, MovementSpeed - Movement_decelerate);
+            anim.SetBool("IsMoving", false);
+
         }
         else
         {
@@ -79,17 +90,18 @@ public class PlayerMovement : MonoBehaviour
         // Wall detection
         Ray WallCheck = new Ray(transform.position, transform.forward);
         Vector3 Dir = transform.forward;
-        bool Wall = Physics.Raycast(WallCheck, out hit, 0.7f);
+        bool Wall = Physics.Raycast(WallCheck, out hit, 1f) && hit.collider.tag != "door" && hit.collider.tag != "PickUpObject" && hit.collider.tag != "PushObj";
 
         if (hit.distance < 0.25f)
         {
-            Dir = transform.forward + hit.normal * 1f;
+            //Dir = transform.forward + hit.normal * 1f;
         }
 
         if (Wall)
         {
             MovementSpeed = 0;
         }
+
 
         // Move the player
         gameObject.transform.position = gameObject.transform.position + Time.deltaTime * Dir * MovementSpeed;
@@ -102,6 +114,15 @@ public class PlayerMovement : MonoBehaviour
             Min_RotationSpeed = 50;
             Max_RotationSpeed = 100;
             Max_MovementSpeed = Mathf.Max(1, MovementSpeed);
+
+        }
+        else if (gameObject.GetComponent<PickUp>().IsMoving)
+        {
+            // IsPickup
+            Rotation_Acceleration = 10;
+            Min_RotationSpeed = 200;
+            Max_RotationSpeed = 350;
+            Max_MovementSpeed = 3;
         }
         else if (Input.GetKey(KeyCode.LeftControl))
         {
@@ -129,9 +150,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Jumping
-        if (Input.GetKeyDown(KeyCode.Space) && OnGround)
+        if (Input.GetKeyDown(KeyCode.Space) && OnGround && !(gameObject.GetComponent<PickUp>().IsMoving) && !(gameObject.GetComponent<PushAndPull>().IsHolding))
         {
             GetComponent<Rigidbody>().velocity += jumpHeight * Vector3.up;
+            anim.SetTrigger("IsJumping");
         }
     }
 

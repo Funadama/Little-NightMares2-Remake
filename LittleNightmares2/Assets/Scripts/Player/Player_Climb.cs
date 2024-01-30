@@ -26,8 +26,8 @@ public class Player_Climb : MonoBehaviour
     {
 
         // Raycast to check if climbing is possible
-        Ray ray = new Ray(transform.position + transform.forward + new Vector3(0, 2, 0), Vector3.down);
-        CanClimb = Physics.Raycast(ray, out Hit, 0.5f);
+        Ray ray = new Ray(transform.position + transform.forward + new Vector3(0, 3, 0), Vector3.down);
+        CanClimb = Physics.Raycast(ray, out Hit, 0.5f) && Hit.collider.tag != "PickUpObject";
 
         // Check for input to initiate climbing
         if (Input.GetKey(KeyCode.Mouse0) && CanClimb && !(IsClimb))
@@ -41,7 +41,7 @@ public class Player_Climb : MonoBehaviour
             HitPos = Hit.point;
 
             // Align with the wall
-            Ray WallCheck = new Ray(transform.position + new Vector3(0, 1.5f, 0), transform.forward);
+            Ray WallCheck = new Ray(transform.position + new Vector3(0, 2.5f, 0), transform.forward);
             Physics.Raycast(WallCheck, out RaycastHit hit, 2);
 
             TargetRotation = -hit.normal;
@@ -82,8 +82,8 @@ public class Player_Climb : MonoBehaviour
         {
             // Move the player up during climbing
             Vector3 NewPos = gameObject.transform.position;
-            NewPos.y = HitPos.y + 0.64f;
-            gameObject.transform.position = NewPos + transform.forward;
+            NewPos.y = HitPos.y;
+            gameObject.transform.position = NewPos + transform.forward * 1.2f;
             IsClimb = false;
         }
     }
