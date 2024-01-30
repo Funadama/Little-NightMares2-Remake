@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class PickUp : MonoBehaviour
 {
-    private bool CanPickUp;
+    public bool CanPickUp;
     private bool IsHolding;
-    private float MoveSpeed = 5;
+    private float MoveSpeed = 1;
 
     public Transform Target;
     public Transform PlayerHand;
@@ -65,7 +65,7 @@ public class PickUp : MonoBehaviour
 
     public void MoveObj()
     {
-        if(IsHolding)
+        if (IsHolding)
         {
             IsMoving = true;
             IsPickup = false;

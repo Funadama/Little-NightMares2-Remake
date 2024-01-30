@@ -29,18 +29,19 @@ public class PushAndPull : MonoBehaviour
     {
         if (CanMove && Input.GetKey(KeyCode.Mouse0))
         {
-            
+
             IsHolding = true;
 
             PlayerAnim.SetTrigger("Grab");
             PushObj.GetComponent<Rigidbody>().isKinematic = true;
-            
+
 
             if (Input.GetKey("d"))
             {
                 Vector3 Dir = (Player.position - TargetW.position).normalized;
                 PushObj.position = Vector3.Lerp(PushObj.position, TargetW.position, MoveSpeed * Time.deltaTime);
                 Player.position = Vector3.Lerp(Player.position, TargetW.position + Dir * 2.5f, MoveSpeed * Time.deltaTime);
+                PlayerAnim.SetBool("IsPushing", true);
             }
 
             if (Input.GetKey("a"))
@@ -49,9 +50,10 @@ public class PushAndPull : MonoBehaviour
 
                 PushObj.position = Vector3.Lerp(PushObj.position, TargetS.position, MoveSpeed * Time.deltaTime);
                 Player.position = Vector3.Lerp(Player.position, TargetS.position + Dir * 2.5f, MoveSpeed * Time.deltaTime);
+                PlayerAnim.SetBool("IsPulling", true);
             }
 
-            
+
 
 
         }
@@ -61,7 +63,7 @@ public class PushAndPull : MonoBehaviour
             PlayerAnim.SetTrigger("LetGo");
         }
 
-        
+
     }
 
     private void OnTriggerEnter(Collider collision)
