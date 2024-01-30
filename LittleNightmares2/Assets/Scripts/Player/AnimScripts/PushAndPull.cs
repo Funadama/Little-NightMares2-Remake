@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class PushAndPull : MonoBehaviour
 {
+    private bool AnimationPull;
+    private bool AnimationPush;
     private bool CanMove;
     private PlayerMovement move;
     private float currentAngle;
@@ -41,7 +43,13 @@ public class PushAndPull : MonoBehaviour
                 Vector3 Dir = (Player.position - TargetW.position).normalized;
                 PushObj.position = Vector3.Lerp(PushObj.position, TargetW.position, MoveSpeed * Time.deltaTime);
                 Player.position = Vector3.Lerp(Player.position, TargetW.position + Dir * 2.5f, MoveSpeed * Time.deltaTime);
-                PlayerAnim.SetBool("IsPushing", true);
+                if (!(AnimationPull))
+                {
+                    AnimationPull = true;
+                    AnimationPush = false;
+                    PlayerAnim.SetTrigger("IsPushing");
+                    Debug.Log("test1");
+                }
             }
 
             if (Input.GetKey("a"))
@@ -50,7 +58,13 @@ public class PushAndPull : MonoBehaviour
 
                 PushObj.position = Vector3.Lerp(PushObj.position, TargetS.position, MoveSpeed * Time.deltaTime);
                 Player.position = Vector3.Lerp(Player.position, TargetS.position + Dir * 2.5f, MoveSpeed * Time.deltaTime);
-                PlayerAnim.SetBool("IsPulling", true);
+                if (!(AnimationPush))
+                {
+                    AnimationPush = true;
+                    AnimationPull = false;
+                    PlayerAnim.SetTrigger("IsPulling");
+                    Debug.Log("test2");
+                }
             }
 
 
@@ -60,6 +74,8 @@ public class PushAndPull : MonoBehaviour
         else if (IsHolding)
         {
             IsHolding = false;
+            AnimationPush = false;
+            AnimationPull = false;
             PlayerAnim.SetTrigger("LetGo");
         }
 
